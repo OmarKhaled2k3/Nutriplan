@@ -1,3 +1,4 @@
+import { API_KEY } from "./config.js";
 export async function getAreas(){
     let response = await fetch("https://nutriplan-api.vercel.app/api/meals/areas")
     const data = await response.json();
@@ -30,6 +31,19 @@ export async function getByName(name){
 }
 export async function getById(id){
     let response = await fetch(`https://nutriplan-api.vercel.app/api/meals/${id}`)
+    const data = await response.json();
+    return data;
+}
+export async function getNutrition(jsonString){
+    const url = `https://nutriplan-api.vercel.app/api/nutrition/analyze`;
+    let response = await fetch(url,{
+        method:"POST",
+        headers:{
+            'x-api-key': API_KEY ,
+            'Content-Type': 'application/json'
+        },
+        body: jsonString
+    });
     const data = await response.json();
     return data;
 }

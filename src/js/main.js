@@ -14,7 +14,6 @@
 //     // Arguments: (state data, title, new url path)
 //     history.pushState({page: pageId}, "", "/" + pageId);
 // }
-import { createElement } from "react";
 import {
   getAreas,
   getMealTypes,
@@ -22,9 +21,27 @@ import {
   getByArea,
   getByType,
   getByName,
-  getById
+  getById,
+  getNutrition,
 } from "./retrieve.js";
-import { showSpinner, displayNotFound, changeActive } from "./ui/components.js";
+import {
+  showSpinner,
+  showSpinnerBefore,
+  displayNotFound,
+  changeActive,
+  disableNutritionFacts,
+  enableNutritionFacts,
+  removeSpinnerBefore,
+  displayNotFoundBefore,
+  removeNotFoundBefore
+} from "./ui/components.js";
+const DAILY_TARGETS = {
+  protein: 50,
+  carbs: 250,
+  fat: 65,
+  fiber: 30,
+  sugar: 50,
+};
 async function displayRandomMeals() {
   let data = await getRandomMeals(25);
   displayRecipes(data);
@@ -33,7 +50,10 @@ let divRecipes = document.querySelector("#recipes-grid");
 async function addAreas() {
   let divAreas = document.querySelector(".areas");
   const allRecipesBtn = document.querySelector("#allRecipesBtn");
-  allRecipesBtn.addEventListener("click",() => {displayRandomMeals();changeActive(divAreas,allRecipesBtn);});
+  allRecipesBtn.addEventListener("click", () => {
+    displayRandomMeals();
+    changeActive(divAreas, allRecipesBtn);
+  });
   const data = await getAreas();
   for (let { name } of data.results) {
     let btn = document.createElement("button");
@@ -43,7 +63,7 @@ async function addAreas() {
     );
     btn.innerHTML = name;
     btn.addEventListener("click", async () => {
-      changeActive(divAreas,btn);
+      changeActive(divAreas, btn);
       showSpinner(divRecipes);
       let data = await getByArea(name);
       displayRecipes(data, name);
@@ -119,9 +139,10 @@ async function displayRecipes(data, title) {
     )
     .join("");
   divRecipes.innerHTML = recipesCard;
-  for(const recipe of divRecipes.children){
-    
-    recipe.addEventListener("click",()=>{displayMeal(recipe.dataset.mealId);});
+  for (const recipe of divRecipes.children) {
+    recipe.addEventListener("click", () => {
+      displayMeal(recipe.dataset.mealId);
+    });
   }
 }
 async function searchByname() {
@@ -131,34 +152,146 @@ async function searchByname() {
       showSpinner(divRecipes);
       let data = await getByName(input.value);
       displayRecipes(data, ` "${input.value}"`);
+    } else if (input.value.length === 0) {
+      displayRandomMeals();
     }
-    else if (input.value.length === 0){displayRandomMeals();}
   });
 }
-async function displayMeal(id){
-const mealRecipe = await getById(id);
-const heroDiv = querySelector("#heroDiv");
-const img = heroDiv.querySelector('img');
-const divTags = heroDiv.querySelector("#divTags");
-const divTagsChildren = Array.from(divTags.children);
-const title = heroDiv.querySelector('h1');
-title.innerHTML = mealRecipe.name;
-divTagsChildren[0].innerHTML=mealRecipe.category;
-divTagsChildren[1].innerHTML=mealRecipe.area !== null ? mealRecipe.area : "International";
-for (let i=2;i<divTagsChildren.length;i++) {
-  divTagsChildren[i].remove();
+async function getMealNutrition(mealRecipe) {
+  const ingredientsJoin = mealRecipe.ingredients.map(
+    ({ ingredient, measure }) => measure + " " + ingredient,
+  );
+  console.log(ingredientsJoin);
+  const meal = { recipeName: mealRecipe.name, ingredients: ingredientsJoin };
+  const jsonString = JSON.stringify(meal);
+  console.log(jsonString);
+  return await getNutrition(jsonString);
 }
-const tags = mealRecipe.tags;
-img.setAttribute("src",mealRecipe.thumbnail);
-if(tags && tags.length>0){
-  for(let tag of tags ){
-    const tagSpan = createElement("span");
-    tagSpan.setAttribute("class","px-3 py-1 bg-purple-500 text-white text-sm font-semibold rounded-full");
-    tagSpan.innerHTML=tag;
-    divTags.append(tagSpan);
+function displayTags(mealRecipe) {
+  const divTags = heroDiv.querySelector("#divTags");
+  const divTagsChildren = Array.from(divTags.children);
+  divTagsChildren[0].innerHTML = mealRecipe.category;
+  divTagsChildren[1].innerHTML =
+    mealRecipe.area !== null ? mealRecipe.area : "International";
+  for (let i = 2; i < divTagsChildren.length; i++) {
+    divTagsChildren[i].remove();
+  }
+  const tags = mealRecipe.tags;
+  if (tags && tags.length > 0) {
+    for (let tag of tags) {
+      const tagSpan = document.createElement("span");
+      tagSpan.setAttribute(
+        "class",
+        "px-3 py-1 bg-purple-500 text-white text-sm font-semibold rounded-full",
+      );
+      tagSpan.innerHTML = tag;
+      divTags.append(tagSpan);
+    }
   }
 }
+function displayIngredients(ingredients) {
+  const ingredientsCount = document.querySelector("#ingredientsCount");
+  ingredientsCount.innerHTML = ingredients.length;
+  const ingredientsList = document.querySelector("#ingredientsList");
+  const ingCheckBox = ingredients
+    .map(
+      ({ ingredient, measure }) => ` 
+    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
+                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
+                  <span class="text-gray-700">
+                    <span class="font-medium text-gray-900">${measure}</span> ${ingredient}
+                  </span>
+                </div>
+  `,
+    )
+    .join("");
+  ingredientsList.innerHTML = ingCheckBox;
 }
+function displayInstructions(instructions) {
+  const instructionsList = document.querySelector("#instructionsList");
+  const instruction = instructions
+    .map(
+      (instruction, idx) => ` 
+    <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div
+                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
+                    ${idx + 1}
+                  </div>
+                  <p class="text-gray-700 leading-relaxed pt-2">
+                    ${instruction}
+                  </p>
+                </div>
+  `,
+    )
+    .join("");
+  instructionsList.innerHTML = instruction;
+}
+async function displayNutrition(nutrition) {
+  const nutritionDetails = nutrition.data;
+  console.log(nutrition);
+  const servings = document.querySelector("#hero-servings");
+  const calServing = document.querySelector("#hero-calories");
+  const calPerServing = document.querySelector("#calories-per-serving");
+  const totalCalories = document.querySelector("#total-calories");
+  servings.innerHTML = nutritionDetails.servings;
+  calServing.innerHTML = nutritionDetails.perServing.calories + " cal/serving";
+  console.log(calPerServing)
+  calPerServing.innerHTML = nutritionDetails.perServing.calories;
+  totalCalories.innerHTML = nutritionDetails.totals.calories;
+  const { perServing } = nutritionDetails;
+  const facts = Object.fromEntries(
+    Object.entries(DAILY_TARGETS).map(([macro, target]) => {
+      const amount = perServing[macro];
+      const percentage = Math.round((amount / target)*100) 
+      return [macro, [amount,  percentage > 100 ?100:percentage]];
+    }),
+  );
+  for (let [key, value] of Object.entries(facts)) {
+    const macroGramsDiv = document.querySelector(`#${key}Value`);
+    const macroWidthDiv = document.querySelector(`#${key}Width`);
+    if (macroGramsDiv) macroGramsDiv.innerHTML = value[0];
+    if (macroWidthDiv)
+      macroWidthDiv.setAttribute("style", `width: ${value[1]}%`);
+  }
+}
+async function displayMeal(id) {
+  const data = await getById(id);
+  const mealRecipe = data.result;
+  const heroDiv = document.querySelector("#heroDiv");
+  const img = heroDiv.querySelector("img");
+  const video = document.querySelector("iframe");
+  const title = heroDiv.querySelector("h1");
+  const rawUrl = mealRecipe.youtube || "";
+  const videoUrl =
+    "https://www.youtube.com/embed/" + rawUrl.slice(rawUrl.indexOf("=") + 1);
+  title.innerHTML = mealRecipe.name;
+  img.setAttribute("src", mealRecipe.thumbnail);
+  img.setAttribute("alt", mealRecipe.name);
+  console.log(videoUrl);
+  video.setAttribute("src", videoUrl);
+  displayTags(mealRecipe);
+  displayIngredients(mealRecipe.ingredients);
+  displayInstructions(mealRecipe.instructions);
+  const nutritionFactsContainer = document.querySelector(
+    "#nutrition-facts-container",
+  );
+  removeNotFoundBefore(nutritionFactsContainer);
+  disableNutritionFacts(nutritionFactsContainer);
+  showSpinnerBefore(nutritionFactsContainer);
+  try {
+    const nutritionDetails = await getMealNutrition(mealRecipe);
+    removeSpinnerBefore(nutritionFactsContainer);
+    if (nutritionDetails && nutritionDetails.success === true) {
+      enableNutritionFacts(nutritionFactsContainer);
+      displayNutrition(nutritionDetails);
+    } else {
+      displayNotFound(nutritionFactsContainer, "nutrition facts");
+    }
+  } catch {
+    console.log("failed to get nutrition details");
+  }
+}
+
 addAreas();
 addMealTypes();
 displayRandomMeals();

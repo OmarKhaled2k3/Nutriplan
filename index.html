@@ -258,72 +258,10 @@
               <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-emerald-600"></i>
                 Ingredients
-                <span class="text-sm font-normal text-gray-500 ml-auto">9 items</span>
+                <span class="text-sm font-normal text-gray-500 ml-auto" id="ingredientsCount">9 items</span>
               </h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">3/4 cup</span> soy
-                    sauce
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">1/2 cup</span>
-                    water
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">1/4 cup</span>
-                    brown sugar
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">1/2 teaspoon</span>
-                    ground ginger
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">1/2 teaspoon</span>
-                    minced garlic
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">4 Tablespoons</span>
-                    cornstarch
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">2</span> chicken
-                    breasts
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">1 bag</span>
-                    stir-fry vegetables
-                  </span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors">
-                  <input type="checkbox" class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300" />
-                  <span class="text-gray-700">
-                    <span class="font-medium text-gray-900">3 cups</span>
-                    brown rice
-                  </span>
-                </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="ingredientsList">
+                
               </div>
             </div>
 
@@ -333,67 +271,8 @@
                 <i class="fa-solid fa-shoe-prints text-emerald-600"></i>
                 Instructions
               </h2>
-              <div class="space-y-4">
-                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
-                    1
-                  </div>
-                  <p class="text-gray-700 leading-relaxed pt-2">
-                    Preheat oven to 350° F. Spray a 9x13-inch baking pan with
-                    non-stick spray.
-                  </p>
-                </div>
-                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
-                    2
-                  </div>
-                  <p class="text-gray-700 leading-relaxed pt-2">
-                    Combine soy sauce, ½ cup water, brown sugar, ginger and
-                    garlic in a small saucepan and cover. Bring to a boil over
-                    medium heat. Remove lid and cook for one minute once
-                    boiling.
-                  </p>
-                </div>
-                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
-                    3
-                  </div>
-                  <p class="text-gray-700 leading-relaxed pt-2">
-                    Meanwhile, stir together the cornstarch and 2 tablespoons
-                    of water in a separate dish until smooth. Once sauce is
-                    boiling, add mixture to the saucepan and stir to combine.
-                    Cook until the sauce starts to thicken then remove from
-                    heat.
-                  </p>
-                </div>
-                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
-                    4
-                  </div>
-                  <p class="text-gray-700 leading-relaxed pt-2">
-                    Place the chicken breasts in the prepared pan. Pour one
-                    cup of the sauce over top of chicken. Place chicken in
-                    oven and bake 35 minutes or until cooked through. Remove
-                    from oven and shred chicken in the pan using two forks.
-                  </p>
-                </div>
-                <div class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
-                    5
-                  </div>
-                  <p class="text-gray-700 leading-relaxed pt-2">
-                    *Meanwhile, steam the vegetables according to package
-                    directions and stir together with the cooked brown rice.
-                    Add the remaining sauce to the mixture and stir to
-                    combine. Serve the chicken over the rice and veggie
-                    mixture.
-                  </p>
-                </div>
+              <div class="space-y-4" id="instructionsList">
+                
               </div>
             </div>
 
@@ -421,25 +300,25 @@
                 <i class="fa-solid fa-chart-pie text-emerald-600"></i>
                 Nutrition Facts
               </h2>
-              <div id="nutrition-facts-container">
+              <div id="nutrition-facts-container" class="hidden">
                 <p class="text-sm text-gray-500 mb-4">Per serving</p>
 
                 <div class="text-center py-4 mb-4 bg-linear-to-br from-emerald-50 to-teal-50 rounded-xl">
                   <p class="text-sm text-gray-600">Calories per serving</p>
-                  <p class="text-4xl font-bold text-emerald-600">485</p>
-                  <p class="text-xs text-gray-500 mt-1">Total: 1940 cal</p>
+                  <p class="text-4xl font-bold text-emerald-600" id="calories-per-serving">485</p>
+                  <p class="text-xs text-gray-500 mt-1" id="total-calories">Total: 1940 cal</p>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4" >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                       <span class="text-gray-700">Protein</span>
                     </div>
-                    <span class="font-bold text-gray-900">42g</span>
+                    <span class="font-bold text-gray-900" id="protienValue">42g</span>
                   </div>
                   <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 84%"></div>
+                    <div class="bg-emerald-500 h-2 rounded-full" id="protienWidth"style="width: 84%"></div>
                   </div>
 
                   <div class="flex items-center justify-between">
@@ -447,10 +326,10 @@
                       <div class="w-3 h-3 rounded-full bg-blue-500"></div>
                       <span class="text-gray-700">Carbs</span>
                     </div>
-                    <span class="font-bold text-gray-900">52g</span>
+                    <span class="font-bold text-gray-900" id="carbsValue">52g</span>
                   </div>
                   <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-blue-500 h-2 rounded-full" style="width: 17%"></div>
+                    <div class="bg-blue-500 h-2 rounded-full"id="carbsWidth" style="width: 17%"></div>
                   </div>
 
                   <div class="flex items-center justify-between">
@@ -458,10 +337,10 @@
                       <div class="w-3 h-3 rounded-full bg-purple-500"></div>
                       <span class="text-gray-700">Fat</span>
                     </div>
-                    <span class="font-bold text-gray-900">8g</span>
+                    <span class="font-bold text-gray-900" id="fatValue">8g</span>
                   </div>
                   <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-purple-500 h-2 rounded-full" style="width: 12%"></div>
+                    <div class="bg-purple-500 h-2 rounded-full"id="fatWidth" style="width: 12%"></div>
                   </div>
 
                   <div class="flex items-center justify-between">
@@ -469,10 +348,10 @@
                       <div class="w-3 h-3 rounded-full bg-orange-500"></div>
                       <span class="text-gray-700">Fiber</span>
                     </div>
-                    <span class="font-bold text-gray-900">4g</span>
+                    <span class="font-bold text-gray-900" id="fiberValue">4g</span>
                   </div>
                   <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-orange-500 h-2 rounded-full" style="width: 14%"></div>
+                    <div class="bg-orange-500 h-2 rounded-full"id="fiberWidth" style="width: 14%"></div>
                   </div>
 
                   <div class="flex items-center justify-between">
@@ -480,10 +359,10 @@
                       <div class="w-3 h-3 rounded-full bg-pink-500"></div>
                       <span class="text-gray-700">Sugar</span>
                     </div>
-                    <span class="font-bold text-gray-900">12g</span>
+                    <span class="font-bold text-gray-900" id="sugarValue">12g</span>
                   </div>
                   <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-pink-500 h-2 rounded-full" style="width: 24%"></div>
+                    <div class="bg-pink-500 h-2 rounded-full"id="sugarWidth" style="width: 24%"></div>
                   </div>
                 </div>
 
@@ -495,18 +374,6 @@
                     <div class="flex justify-between">
                       <span class="text-gray-600">Vitamin A</span>
                       <span class="font-medium">15%</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Vitamin C</span>
-                      <span class="font-medium">25%</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Calcium</span>
-                      <span class="font-medium">4%</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Iron</span>
-                      <span class="font-medium">12%</span>
                     </div>
                   </div>
                 </div>
