@@ -158,3 +158,64 @@ export function disableLogRecipeBtn(){
     btn.classList.add('hidden');
   }
 }
+export function displayWeeklyOverview(dataArray) {
+  // Target the updated grid element ID
+  const container = document.querySelector("#weekly-overview-grid");
+  if (!container) return;
+
+  container.innerHTML = dataArray.map(item => {
+    // 1. Check if this specific card is today's active highlighted day
+    const cardClasses = item.isSelected 
+      ? "text-center bg-indigo-100 rounded-xl p-2" 
+      : "text-center p-2";
+
+    // 2. Select the color scheme for the calorie section based on data state
+    const kcalContainerClass = item.isSelected 
+      ? "mt-2 text-emerald-600" 
+      : (item.kcal > 0 ? "mt-2 text-emerald-600" : "mt-2 text-gray-300");
+
+    return `
+      <div class="${cardClasses}">
+        <p class="text-xs text-gray-500 mb-1">${item.day}</p>
+        <p class="text-sm font-medium text-gray-900">${item.date}</p>
+        
+        <div class="${kcalContainerClass}">
+          <p class="text-lg font-bold">${item.kcal}</p>
+          <p class="text-xs">kcal</p>
+        </div>
+        
+        ${item.items > 0 ? `<p class="text-xs text-gray-400 mt-1">${item.items} items</p>` : ''}
+      </div>
+    `;
+  }).join("");
+}
+export function getCalculatedWeeklySummary(foodLog) {
+  const today = new Date();
+  const currentDay = today.getDay();
+  const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+  
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - daysSinceMonday);
+  return Array.from({ length: 7 }, (_, i) => {
+    const nextDay = new Date(monday);
+    nextDay.setDate(monday.getDate() + i);
+    const dateKey = nextDay.toISOString().split('T')[0]; // "2026-07-05"
+    const todayStr = today.toISOString().split('T')[0];
+    const dayName = nextDay.toLocaleDateString('en-US', { weekday: 'short' });
+
+    const matchLogs = foodLog.filter(log => log.dateString === dateKey);
+    const dayTotals = matchLogs.reduce((acc, log) => {
+      acc.kcal += (log.nutrients?.calories || 0) ;
+      acc.items += 1;
+      return acc;
+    }, { kcal: 0, items: 0 });
+
+    return {
+      day: dayName,
+      date: nextDay.getDate(),
+      kcal: Math.round(dayTotals.kcal),
+      items: dayTotals.items,
+      isSelected: dateKey === todayStr
+    };
+  });
+}

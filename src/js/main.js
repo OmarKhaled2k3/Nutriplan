@@ -45,7 +45,9 @@ import {
   changeActiveGrade,
   displayEmptyFoodLog,
   enableLogRecipeBtn,
-  disableLogRecipeBtn
+  disableLogRecipeBtn,
+  displayWeeklyOverview,
+  getCalculatedWeeklySummary
 } from "./ui/components.js";
 const DAILY_TARGETS = {
   protein: 50,
@@ -112,7 +114,9 @@ function logFood(food,type){
   console.log({foodLog});
   const currentTotal = calculateTotalIntake();
   updateIntakeUI(currentTotal);
+  updateDashboard();
   displayFoodLog();
+  window.alert(`${type} logged successfully`);
 }
 function handleLogRecipeClick(){
   if (activeRecipe) {
@@ -649,6 +653,10 @@ async function filterByNutriScore(grade){
     })
   }
 }
+function updateDashboard() {
+  const currentWeekData = getCalculatedWeeklySummary(foodLog);
+  displayWeeklyOverview(currentWeekData);
+}
 appLoadingScreen();
 disableSectionsExcept();
 enableHomeSection();
@@ -662,3 +670,4 @@ addCategories();
 assignNutriScoreButtons();
 displayEmptyFoodLog();
 loadFoodLog();
+updateDashboard();
