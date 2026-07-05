@@ -4,16 +4,6 @@
  * This is the main entry point for the application.
  * Import your modules and initialize the app here.
  */
-
-// function showPage(pageId) {
-//     // 1. Hide/show your sections
-//     document.querySelectorAll('.content-page').forEach(div => div.style.display = 'none');
-//     document.getElementById(pageId + '-section').style.display = 'block';
-
-//     // 2. Change the URL smoothly
-//     // Arguments: (state data, title, new url path)
-//     history.pushState({page: pageId}, "", "/" + pageId);
-// }
 import {
   getAreas,
   getMealTypes,
@@ -103,9 +93,14 @@ class FoodItem {
     this.name = name;
     this.nutrients = nutrients;
     this.thumbnail = thumbnail;
-    this.loggedTime =
-      loggedTime ||
-      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    this.addedAt = loggedTime || new Date().toISOString();
+    this.dateString = this.addedAt.split("T")[0];
+  }
+  getFormattedTime() {
+    return new Date(this.addedAt).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 }
 class Product extends FoodItem {
@@ -125,12 +120,13 @@ class Recipe extends FoodItem {
   }
 }
 function saveFoodLog() {
-  localStorage.setItem("foodLog", JSON.stringify(foodLog));
+  try {
+    localStorage.setItem("foodLog", JSON.stringify(foodLog));
+  } catch (error) {
+    console.log(error);
+  }
 }
 function logFood(food, type) {
-  // if(type === "product"){
-  //   loggedItem = new Product(food.name,food.nutrients,food.thumbnail,food.barcode,food.brand);
-  // }
   console.log("Pushing into array:", food);
   foodLog.push(food);
   saveFoodLog();
@@ -168,8 +164,12 @@ function displayFoodLog() {
   const logContainer = document.querySelector("#logged-items-list");
 
   logContainer.innerHTML = foodLog
-    .map(
-      ({ name, brand, type, loggedTime, nutrients, thumbnail }, index) => `
+    .map(({ name, brand, type, addedAt, nutrients, thumbnail }, index) => {
+      const formattedTime = new Date(addedAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      return `
     <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all">
       
       <div class="flex items-center gap-4">
@@ -181,7 +181,7 @@ function displayFoodLog() {
           <p class="text-sm text-gray-500">
             ${brand || "Unknown"} <span class="mx-1">•</span> <span class="text-blue-600">${type}</span>
           </p>
-          <p class="text-xs text-gray-400 mt-1">${loggedTime}</p>
+          <p class="text-xs text-gray-400 mt-1">${formattedTime}</p>
         </div>
       </div>
 
@@ -202,8 +202,8 @@ function displayFoodLog() {
       </div>
 
     </div>
-  `,
-    )
+  `;
+    })
     .join("");
   const removeButtons = logContainer.querySelectorAll(".remove-foodlog-item");
   removeButtons.forEach((btn) => {
@@ -227,7 +227,7 @@ export function loadFoodLog() {
           item.thumbnail,
           item.barcode,
           item.brand,
-          item.loggedTime,
+          item.addedAt,
         );
       } else {
         return new Recipe(
@@ -235,12 +235,13 @@ export function loadFoodLog() {
           item.nutrients,
           item.thumbnail,
           item.servings,
-          item.loggedTime,
+          item.addedAt,
         );
       }
     });
     const currentTotal = calculateTotalIntake();
     updateIntakeUI(currentTotal);
+    updateDashboard();
     displayFoodLog();
   } catch (error) {
     console.error("Error parsing food log from localStorage:", error);
@@ -252,9 +253,11 @@ function removeItemFromLog(index) {
   saveFoodLog();
   const currentTotal = calculateTotalIntake();
   updateIntakeUI(currentTotal);
+  updateDashboard();
   displayFoodLog();
 }
 function updateIntakeUI(totals) {
+  console.log({totals});
   const loggedItemCount = document.querySelector("#logged-count");
   if (foodLog && foodLog.length > 0) {
     loggedItemCount.innerHTML = `Logged Items (${foodLog.length})`;
@@ -265,16 +268,16 @@ function updateIntakeUI(totals) {
   document.querySelector("#calories-today").innerHTML =
     `${Math.round(totals.calories)} / ${DAILY_TARGETS.calories} kcal`;
   document.querySelector("#protien-today").innerHTML =
-    `${Math.round(totals.protein)} /${DAILY_TARGETS.protein} g`;
+    `${Math.round(totals.protein)} / ${DAILY_TARGETS.protein} g`;
   document.querySelector("#carbs-today").innerHTML =
-    `${Math.round(totals.carbs)} /${DAILY_TARGETS.carbs} g`;
+    `${Math.round(totals.carbs)} / ${DAILY_TARGETS.carbs} g`;
   document.querySelector("#fat-today").innerHTML =
     `${Math.round(totals.fat)} / ${DAILY_TARGETS.fat} g`;
 
   document.querySelector("#calories-width-today").style.width =
     `${Math.min((totals.calories / DAILY_TARGETS.calories) * 100, 100)}%`;
   document.querySelector("#protien-width-today").style.width =
-    `${Math.min((totals.protien / DAILY_TARGETS.protien) * 100, 100)}%`;
+    `${Math.min((totals.protein / DAILY_TARGETS.protein) * 100, 100)}%`;
   document.querySelector("#carbs-width-today").style.width =
     `${Math.min((totals.carbs / DAILY_TARGETS.carbs) * 100, 100)}%`;
   document.querySelector("#fat-width-today").style.width =
@@ -283,9 +286,9 @@ function updateIntakeUI(totals) {
 function calculateTotalIntake() {
   return foodLog.reduce(
     (total, item) => {
-      console.log(item);
+      console.log(item.nutrients);
       total.calories += item.nutrients.calories;
-      total.protien += item.nutrients.protien;
+      total.protein += item.nutrients.protein;
       total.carbs += item.nutrients.carbs;
       total.fat += item.nutrients.fat;
       return total;
@@ -469,7 +472,7 @@ async function displayProducts(data, title = currentQuery, number) {
     .join("");
   productsGrid.addEventListener("click", (event) => {
     const card = event.target.closest(".product-card");
-    if (!card) return; 
+    if (!card) return;
     const index = card.dataset.index;
     const selectedProductData = data[index];
     if (selectedProductData) {
@@ -845,7 +848,7 @@ export function openProductDetailModal(product) {
   let productLog = new Product(
     product.name,
     product.nutrients,
-    product.thumbnail,
+    image,
     product.barcode,
     product.brand,
   );
