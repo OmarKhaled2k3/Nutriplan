@@ -79,7 +79,12 @@ function assignButtonsTabs() {
 }
 async function displayRandomMeals() {
   let data = await getRandomMeals(25);
-  displayRecipes(data);
+  try {
+    displayRecipes(data);
+  } catch (error) {
+    console.log(error)
+  }
+  
 }
 let divRecipes = document.querySelector("#recipes-grid");
 let retrievedProducts;
@@ -315,7 +320,12 @@ async function addAreas() {
       changeActive(divAreas, btn);
       showSpinner(divRecipes);
       let data = await getByArea(name);
-      displayRecipes(data, name);
+      try {
+        displayRecipes(data, name);
+      } catch (error) {
+        console.log(err);
+      }
+      
     });
     divAreas.append(btn);
   }
@@ -344,7 +354,12 @@ async function addMealTypes() {
     btnMeal.addEventListener("click", async () => {
       showSpinner(divRecipes);
       let data = await getByType(name);
-      displayRecipes(data, name);
+      try{
+        displayRecipes(data, name);
+      }
+      catch(err){
+        console.log(err)
+      }
     });
     divMealTypes.append(btnMeal);
   }
