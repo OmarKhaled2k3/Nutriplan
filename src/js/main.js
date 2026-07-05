@@ -402,7 +402,6 @@ async function displayProducts(data, title = currentQuery, number) {
   let productsCount = document.querySelector("#products-count");
   let length = data.length;
   if (length === 0 ) {
-    retrievedProducts = null;
     displayNotFound(productsGrid,'products');
     productsCount.innerHTML = `No products found in ${title} `;
     return;
@@ -698,9 +697,9 @@ function assignNutriScoreButtons() {
   const buttons = document.querySelectorAll(".nutri-score-filter");
   for (let button of buttons) {
     button.addEventListener("click", () => {
+      changeActiveGrade(buttons[0].parentElement, button);
       if (retrievedProducts) {
         filterByNutriScore(button.dataset.grade);
-        changeActiveGrade(buttons[0].parentElement, button);
       }
     });
   }
