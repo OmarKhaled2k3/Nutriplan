@@ -94,6 +94,14 @@ export function changeActiveTab(navTabs, clickedTab) {
   clickedTab.classList.replace("hover:bg-gray-50","bg-emerald-50");
   clickedTab.classList.replace("text-gray-600","text-emerald-700");
 }
+export function changeActiveGrade(navTabs, clickedTab) {
+  const currentActive = navTabs.querySelector(".border-2");
+
+  if (currentActive) {
+    currentActive.classList.remove("border-2");
+  }
+  clickedTab.classList.add("border-2");
+}
 export function disableNutritionFacts(nutritionFactsContainer) {
   const active = nutritionFactsContainer.classList.contains("hidden");
   if (!active) {
@@ -125,5 +133,28 @@ export function enableHomeSection(){
   const sections = document.querySelectorAll('section');
   for(let i =0;i<3;i++){
     sections[i].classList.remove('hidden')
+  }
+}
+export function displayEmptyFoodLog() {
+  document.querySelector("#logged-items-list").innerHTML = `
+    <div class="text-center py-8 text-gray-500">
+                <i class="fa-solid fa-utensils text-4xl mb-3 text-gray-300"></i>
+                <p class="font-medium">No meals logged today</p>
+                <p class="text-sm">
+                  Add meals from the Meals page or scan products
+                </p>
+              </div>
+    `;
+}
+export function enableLogRecipeBtn(){
+  const btn = document.querySelector("#log-meal-btn");
+  if(btn.classList.contains("hidden")){
+    btn.classList.remove('hidden');
+  }
+}
+export function disableLogRecipeBtn(){
+  const btn = document.querySelector("#log-meal-btn");
+  if(!btn.classList.contains("hidden")){
+    btn.classList.add('hidden');
   }
 }

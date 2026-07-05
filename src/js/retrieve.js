@@ -1,5 +1,5 @@
 //import { API_KEY } from "./config.js";
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY = "JS180y3rPVkucEKz5VNIM6rkHMsHcFrza2ewThfO";
 export async function getAreas(){
     let response = await fetch("https://nutriplan-api.vercel.app/api/meals/areas")
     const data = await response.json();

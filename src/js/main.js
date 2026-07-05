@@ -41,7 +41,11 @@ import {
   disableSectionsExcept,
   enableHomeSection,
   changeActiveTab,
-  appLoadingScreen
+  appLoadingScreen,
+  changeActiveGrade,
+  displayEmptyFoodLog,
+  enableLogRecipeBtn,
+  disableLogRecipeBtn
 } from "./ui/components.js";
 const DAILY_TARGETS = {
   protein: 50,
@@ -49,6 +53,7 @@ const DAILY_TARGETS = {
   fat: 65,
   fiber: 30,
   sugar: 50,
+  calories:2000
 };
 function assignButtonsTabs(){
   const parentNavs = document.querySelector('nav');
@@ -66,6 +71,181 @@ async function displayRandomMeals() {
   displayRecipes(data);
 }
 let divRecipes = document.querySelector("#recipes-grid");
+let retrievedProducts;
+let currentQuery;
+let foodLog = [];
+let activeRecipe = null;
+class FoodItem{
+  constructor(name,nutrients,thumbnail,loggedTime){
+    this.name = name;
+    this.nutrients = nutrients;
+    this.thumbnail = thumbnail;
+    this.loggedTime = loggedTime || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+}
+class Product extends FoodItem{
+  constructor(name,nutrients,thumbnail,barcode,brand,loggedTime){
+    super(name,nutrients,thumbnail,loggedTime);
+    this.barcode=barcode;
+    this.brand = brand;
+    this.type = "Product"
+  }
+}
+class Recipe extends FoodItem{
+  constructor(name,nutrients,thumbnail,servings,loggedTime){
+    super(name,nutrients,thumbnail,loggedTime);
+    this.brand = "Recipe"
+    this.type = "Recipe"
+    this.servings=servings;
+  }
+}
+function saveFoodLog() {
+  localStorage.setItem("foodLog", JSON.stringify(foodLog));
+}
+function logFood(food,type){
+  // if(type === "product"){
+  //   loggedItem = new Product(food.name,food.nutrients,food.thumbnail,food.barcode,food.brand);
+  // }
+  console.log("Pushing into array:", food);
+  foodLog.push(food);
+  saveFoodLog();
+  console.log({foodLog});
+  const currentTotal = calculateTotalIntake();
+  updateIntakeUI(currentTotal);
+  displayFoodLog();
+}
+function handleLogRecipeClick(){
+  if (activeRecipe) {
+    logFood(activeRecipe, 'recipe');
+  }
+}
+function LogRecipeBtn(recipe){
+  const btn = document.querySelector("#log-meal-btn");
+  activeRecipe = recipe;
+  btn.removeEventListener('click', handleLogRecipeClick);
+  btn.addEventListener('click', handleLogRecipeClick);
+}
+function LogProductBtn(button,product){
+  button.addEventListener('click',()=>{
+    logFood(product,'product')
+  })
+}
+function displayFoodLog() {
+  const logContainer = document.querySelector("#logged-items-list");
+  
+  logContainer.innerHTML = foodLog.map(({ name, brand, type, loggedTime, nutrients, thumbnail }, index) => `
+    <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all">
+      
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center overflow-hidden">
+          ${thumbnail ? `<img src="${thumbnail}" class="w-full h-full object-contain" alt="${name}"/>` : `<i class="fa-solid fa-box text-blue-600 text-xl"></i>`}
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">${name}</p>
+          <p class="text-sm text-gray-500">
+            ${brand || 'Unknown'} <span class="mx-1">•</span> <span class="text-blue-600">${type}</span>
+          </p>
+          <p class="text-xs text-gray-400 mt-1">${loggedTime}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <p class="text-lg font-bold text-emerald-600">${Math.round(nutrients?.calories || 0)}</p>
+          <p class="text-xs text-gray-500">kcal</p>
+        </div>
+        <div class="hidden md:flex gap-2 text-xs text-gray-500">
+          <span class="px-2 py-1 bg-blue-50 rounded">${Math.round(nutrients?.protein || 0)}g P</span>
+          <span class="px-2 py-1 bg-amber-50 rounded">${Math.round(nutrients?.carbs || 0)}g C</span>
+          <span class="px-2 py-1 bg-purple-50 rounded">${Math.round(nutrients?.fat || 0)}g F</span>
+        </div>
+        
+        <button class="remove-foodlog-item text-gray-400 hover:text-red-500 transition-all p-2" data-index="${index}">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+
+    </div>
+  `).join("");
+  const removeButtons = logContainer.querySelectorAll(".remove-foodlog-item");
+  removeButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.dataset.index, 10);
+      removeItemFromLog(index);
+    });
+  });
+}
+export function loadFoodLog() {
+  const savedData = localStorage.getItem("foodLog");
+  if (!savedData) return; 
+
+  try {
+    const rawArray = JSON.parse(savedData);
+    foodLog = rawArray.map(item => {
+      if (item.type === "Product") {
+        return new Product(
+          item.name, 
+          item.nutrients, 
+          item.thumbnail, 
+          item.barcode, 
+          item.brand,
+          item.loggedTime 
+        );
+      } else {
+        return new Recipe(
+          item.name, 
+          item.nutrients, 
+          item.thumbnail, 
+          item.servings,
+          item.loggedTime
+        );
+      }
+    });
+    const currentTotal = calculateTotalIntake();
+    updateIntakeUI(currentTotal);
+    displayFoodLog();
+
+  } catch (error) {
+    console.error("Error parsing food log from localStorage:", error);
+    displayEmptyFoodLog()
+  }
+}
+function removeItemFromLog(index){
+  foodLog.splice(index, 1);
+  saveFoodLog();
+  const currentTotal = calculateTotalIntake();
+  updateIntakeUI(currentTotal);
+  displayFoodLog();
+}
+function updateIntakeUI(totals) {
+  const loggedItemCount = document.querySelector("#logged-count")
+  if(foodLog && foodLog.length>0){
+    loggedItemCount.innerHTML=`Logged Items (${foodLog.length})`;
+  }
+  else{
+    loggedItemCount.innerHTML=`Logged Items (0)`;
+    displayEmptyFoodLog();
+  }
+  document.querySelector("#calories-today").innerHTML = `${Math.round(totals.calories)} / ${DAILY_TARGETS.calories} kcal`;
+  document.querySelector("#protien-today").innerHTML  = `${Math.round(totals.protein)} /${DAILY_TARGETS.protein} g`;
+  document.querySelector("#carbs-today").innerHTML    = `${Math.round(totals.carbs)} /${DAILY_TARGETS.carbs} g`;
+  document.querySelector("#fat-today").innerHTML      = `${Math.round(totals.fat)} / ${DAILY_TARGETS.fat} g`;
+  
+  document.querySelector("#calories-width-today").style.width = `${Math.min((totals.calories/ DAILY_TARGETS.calories)*100,100)}%`;
+  document.querySelector("#protien-width-today").style.width  = `${Math.min((totals.protien/ DAILY_TARGETS.protien)*100,100)}%`;
+  document.querySelector("#carbs-width-today").style.width    = `${Math.min((totals.carbs/ DAILY_TARGETS.carbs)*100,100)}%`;
+  document.querySelector("#fat-width-today").style.width      = `${Math.min((totals.fat/ DAILY_TARGETS.fat)*100,100)}%`;
+}
+function calculateTotalIntake(){
+  return foodLog.reduce((total,item)=>{
+    console.log(item);
+    total.calories += item.nutrients.calories;
+    total.protien += item.nutrients.protien;
+    total.carbs += item.nutrients.carbs;
+    total.fat += item.nutrients.fat;
+    return total;
+  },{calories:0, protein:0, carbs:0, fat:0});
+}
 async function addAreas() {
   let divAreas = document.querySelector(".areas");
   const allRecipesBtn = document.querySelector("#allRecipesBtn");
@@ -167,23 +347,24 @@ async function displayRecipes(data, title) {
     });
   }
 }
-async function displayProducts(data, title,number) {
+async function displayProducts(data, title = currentQuery,number) {
   const productsGrid=document.querySelector("#products-grid");
   let productsCount = document.querySelector("#products-count");
-  let length = data.results.length;
-  if (number) {
-    productsCount.innerHTML = `Found product ${title}`;
-  } else {
-    productsCount.innerHTML = `Found ${length} products for "${title}"`;
-  }
-  productsCount.innerHTML += "recipes";
+  let length = data.length;
   if (length === 0) {
+    retrievedProducts=null;
     displayNotFound(productsGrid);
+    productsCount.innerHTML=`No products found in ${title} `;
     return;
   } else {
-    productsGrid.innerHTML = "";
+    productsGrid.innerHTML = "Found";
   }
-  const productCard = data.results
+  if (number) {
+    productsCount.innerHTML = `product ${data[0].name}`;
+  } else {
+    productsCount.innerHTML = `${length} products for "${title}"`;
+  }
+  const productCard = data
     .map(
       ({ name, barcode,brand,image,nutritionGrade,novaGroup,nutrients}) => ` 
     <div
@@ -203,8 +384,8 @@ async function displayProducts(data, title,number) {
                 <!-- NOVA Badge -->
                 <div
                   class="absolute top-2 right-2 bg-lime-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center"
-                  title="NOVA ${novaGroup}">
-                  2
+                  title="NOVA ${novaGroup || '0'}">
+                  ${novaGroup || '0'}
                 </div>
               </div>
 
@@ -218,25 +399,25 @@ async function displayProducts(data, title,number) {
 
                 <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
                   <span><i class="fa-solid fa-weight-scale mr-1"></i>250g</span>
-                  <span><i class="fa-solid fa-fire mr-1"></i>350 kcal/100g</span>
+                  <span><i class="fa-solid fa-fire mr-1"></i>${Math.round(nutrients.calories)} kcal/100g</span>
                 </div>
 
                 <!-- Mini Nutrition -->
                 <div class="grid grid-cols-4 gap-1 text-center">
                   <div class="bg-emerald-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-emerald-700">${nutrients.protein}</p>
+                    <p class="text-xs font-bold text-emerald-700">${Math.round(nutrients.protein)}</p>
                     <p class="text-[10px] text-gray-500">Protein</p>
                   </div>
                   <div class="bg-blue-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-blue-700">${nutrients.carbs}</p>
+                    <p class="text-xs font-bold text-blue-700">${Math.round(nutrients.carbs)}</p>
                     <p class="text-[10px] text-gray-500">Carbs</p>
                   </div>
                   <div class="bg-purple-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-purple-700">${nutrients.fat}</p>
+                    <p class="text-xs font-bold text-purple-700">${Math.round(nutrients.fat)}</p>
                     <p class="text-[10px] text-gray-500">Fat</p>
                   </div>
                   <div class="bg-orange-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-orange-700">${nutrients.sugar}</p>
+                    <p class="text-xs font-bold text-orange-700">${Math.round(nutrients.sugar)}</p>
                     <p class="text-[10px] text-gray-500">Sugar</p>
                   </div>
                 </div>
@@ -272,10 +453,19 @@ async function searchProductByNameorCode() {
   const searchBtn = document.querySelector("#search-product-btn")
   const productInput = document.querySelector("#product-search-input");
   barcodeBtn.addEventListener('click',async () =>{
-    let data = await getByProductName(barcodeInput.value);
+    console.log("searching...")
+    let data = await getProductByCode(barcodeInput.value);
+    retrievedProducts = data.results;
+    currentQuery = barcodeInput.value;
+    displayProducts(retrievedProducts,barcodeInput.value,barcodeInput.value);
+    console.log(data);
   });
-  searchBtnBtn.addEventListener('click',async () =>{
+  searchBtn.addEventListener('click',async () =>{
     let data = await getByProductName(productInput.value);
+    retrievedProducts = data.results;
+    currentQuery = productInput.value;
+    displayProducts(retrievedProducts,productInput.value);
+    console.log(data);
   });
 }
 async function getMealNutrition(mealRecipe) {
@@ -348,6 +538,7 @@ function displayInstructions(instructions) {
   instructionsList.innerHTML = instruction;
 }
 async function displayNutrition(nutrition) {
+  
   const nutritionDetails = nutrition.data;
   console.log(nutrition);
   const servings = document.querySelector("#hero-servings");
@@ -405,11 +596,57 @@ async function displayMeal(id) {
     if (nutritionDetails && nutritionDetails.success === true) {
       enableNutritionFacts(nutritionFactsContainer);
       displayNutrition(nutritionDetails);
+      enableLogRecipeBtn();
+      console.log(nutritionDetails.data.perServing);
+      let recipe = new Recipe(mealRecipe.name,nutritionDetails.data.perServing,mealRecipe.thumbnail,1);
+      console.log(recipe)
+      LogRecipeBtn(recipe);
     } else {
       displayNotFound(nutritionFactsContainer, "nutrition facts");
+      disableLogRecipeBtn();
     }
-  } catch {
-    console.log("failed to get nutrition details");
+  } catch (err){
+    console.log("failed to get nutrition details,error:"+err);
+  }
+}
+async function addCategories() {
+  let productCategoriesDiv = document.querySelector("#product-categories");
+  let productsGrid = document.querySelector("#products-grid");
+  const data = await getProductsCategories();
+  for (let { name,id } of data.results) {
+    let btn = document.createElement("button");
+    btn.setAttribute(
+      "class",
+      "product-category-btn px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-emerald-200 transition-all",
+    );
+    btn.innerHTML = `<i class="fa-solid fa-cookie mr-1.5"></i>${name}`;
+    btn.addEventListener("click", async () => {
+      showSpinner(productsGrid);
+      let data = await getByProductCategory(id);
+      retrievedProducts = data.results;
+      currentQuery = name;
+      displayProducts(retrievedProducts, name);
+    });
+    productCategoriesDiv.append(btn);
+  }
+}
+async function filterByNutriScore(grade){
+
+  let filterdProducts = retrievedProducts.filter((product) => {
+    if(grade ==="") return true;
+    return product.nutritionGrade === grade
+  } );
+  displayProducts(filterdProducts);
+}
+ function assignNutriScoreButtons(){
+  const buttons = document.querySelectorAll(".nutri-score-filter");
+  for (let button of buttons){
+    button.addEventListener("click",()=>{
+      if(retrievedProducts){
+        filterByNutriScore(button.dataset.grade);
+        changeActiveGrade(buttons[0].parentElement,button);
+      }
+    })
   }
 }
 appLoadingScreen();
@@ -421,3 +658,7 @@ addMealTypes();
 displayRandomMeals();
 searchByName();
 searchProductByNameorCode();
+addCategories();
+assignNutriScoreButtons();
+displayEmptyFoodLog();
+loadFoodLog();

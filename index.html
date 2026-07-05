@@ -209,8 +209,8 @@
         <!-- Hero Section -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
           <div class="relative h-80 md:h-96" id="heroDiv">
-            <img src="https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg"
-              alt="Teriyaki Chicken Casserole" class="w-full h-full object-cover" />
+            <img src=""
+              alt="" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-8">
               <div class="flex items-center gap-3 mb-3" id="divTags">
@@ -219,7 +219,7 @@
                 <span class="px-3 py-1 bg-purple-500 text-white text-sm font-semibold rounded-full">Casserole</span>
               </div>
               <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-                Teriyaki Chicken Casserole
+                
               </h1>
               <div class="flex items-center gap-6 text-white/90">
                 <span class="flex items-center gap-2">
@@ -232,7 +232,7 @@
                 </span>
                 <span class="flex items-center gap-2">
                   <i class="fa-solid fa-fire"></i>
-                  <span id="hero-calories">485 cal/serving</span>
+                  <span id="hero-calories"></span>
                 </span>
               </div>
             </div>
@@ -242,7 +242,7 @@
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-3 mb-8">
           <button id="log-meal-btn"
-            class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all"
+            class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all hidden"
             data-meal-id="52772">
             <i class="fa-solid fa-clipboard-list"></i>
             <span>Log This Meal</span>
@@ -432,9 +432,9 @@
         <!-- Nutrition Grade Filter -->
         <div class="flex items-center gap-4 mb-6">
           <span class="text-sm font-medium text-gray-700">Filter by Nutri-Score:</span>
-          <div class="flex gap-2">
+          <div class="flex gap-2" id="nutri">
             <button
-              class="nutri-score-filter px-4 py-2 rounded-lg text-sm font-bold transition-all bg-emerald-600 text-white"
+              class="nutri-score-filter px-4 py-2 rounded-lg border-2 text-sm font-bold transition-all bg-emerald-600 text-white"
               data-grade="">
               All
             </button>
@@ -472,26 +472,6 @@
             Browse by Category
           </h3>
           <div class="flex gap-3 overflow-x-auto pb-2" id="product-categories">
-            <button
-              class="product-category-btn px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-emerald-200 transition-all">
-              <i class="fa-solid fa-cookie mr-1.5"></i>Snacks
-            </button>
-            <button
-              class="product-category-btn px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-blue-200 transition-all">
-              <i class="fa-solid fa-glass-water mr-1.5"></i>Beverages
-            </button>
-            <button
-              class="product-category-btn px-4 py-2 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-amber-200 transition-all">
-              <i class="fa-solid fa-bread-slice mr-1.5"></i>Breakfast
-            </button>
-            <button
-              class="product-category-btn px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-purple-200 transition-all">
-              <i class="fa-solid fa-ice-cream mr-1.5"></i>Desserts
-            </button>
-            <button
-              class="product-category-btn px-4 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-rose-200 transition-all">
-              <i class="fa-solid fa-cheese mr-1.5"></i>Dairy
-            </button>
           </div>
         </div>
 
@@ -548,40 +528,40 @@
             <div class="bg-emerald-50 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-semibold text-gray-700">Calories</span>
-                <span class="text-sm text-gray-500">0 / 2000 kcal</span>
+                <span class="text-sm text-gray-500" id="calories-today">0 / 2000 kcal</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="bg-emerald-500 h-2.5 rounded-full" id="calories-width-today"style="width: 0%"></div>
               </div>
             </div>
             <!-- Protein Progress -->
             <div class="bg-blue-50 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-semibold text-gray-700">Protein</span>
-                <span class="text-sm text-gray-500">0 / 50 g</span>
+                <span class="text-sm text-gray-500" id="protien-today">0 / 50 g</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="bg-blue-500 h-2.5 rounded-full" id="protien-width-today"style="width: 0%"></div>
               </div>
             </div>
             <!-- Carbs Progress -->
             <div class="bg-amber-50 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-semibold text-gray-700">Carbs</span>
-                <span class="text-sm text-gray-500">0 / 250 g</span>
+                <span class="text-sm text-gray-500" id="carbs-today">0 / 250 g</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="bg-amber-500 h-2.5 rounded-full" id="carbs-width-today" style="width: 0%"></div>
               </div>
             </div>
             <!-- Fat Progress -->
             <div class="bg-purple-50 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-semibold text-gray-700">Fat</span>
-                <span class="text-sm text-gray-500">0 / 65 g</span>
+                <span class="text-sm text-gray-500" id="fat-today">0 / 65 g</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-purple-500 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="bg-purple-500 h-2.5 rounded-full" id="fat-width-today" style="width: 0%"></div>
               </div>
             </div>
           </div>
@@ -589,7 +569,7 @@
           <!-- Logged Items -->
           <div class="border-t border-gray-200 pt-4">
             <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-semibold text-gray-700">
+              <h4 class="text-sm font-semibold text-gray-700" id="logged-count">
                 Logged Items (0)
               </h4>
               <button id="clear-foodlog" class="text-red-500 hover:text-red-600 text-sm font-medium"
@@ -600,13 +580,7 @@
 
             <div id="logged-items-list" class="space-y-2">
               <!-- Empty State -->
-              <div class="text-center py-8 text-gray-500">
-                <i class="fa-solid fa-utensils text-4xl mb-3 text-gray-300"></i>
-                <p class="font-medium">No meals logged today</p>
-                <p class="text-sm">
-                  Add meals from the Meals page or scan products
-                </p>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -625,42 +599,6 @@
               <p>Weekly nutrition chart will appear here</p>
             </div>
           </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-emerald-500 transition-all text-left flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <i class="fa-solid fa-plus text-emerald-600 text-xl"></i>
-            </div>
-            <div>
-              <p class="font-semibold text-gray-900">Log a Meal</p>
-              <p class="text-sm text-gray-500">Add from recipes</p>
-            </div>
-          </button>
-
-          <button
-            class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-teal-500 transition-all text-left flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
-              <i class="fa-solid fa-barcode text-teal-600 text-xl"></i>
-            </div>
-            <div>
-              <p class="font-semibold text-gray-900">Scan Product</p>
-              <p class="text-sm text-gray-500">Use barcode scanner</p>
-            </div>
-          </button>
-
-          <button
-            class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-purple-500 transition-all text-left flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-              <i class="fa-solid fa-pencil text-purple-600 text-xl"></i>
-            </div>
-            <div>
-              <p class="font-semibold text-gray-900">Custom Entry</p>
-              <p class="text-sm text-gray-500">Add custom food</p>
-            </div>
-          </button>
         </div>
       </div>
     </section>
