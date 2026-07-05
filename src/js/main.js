@@ -88,6 +88,7 @@ let currentQuery;
 let foodLog = [];
 let activeRecipe = null;
 let activeProduct = null;
+const productsGrid = document.querySelector("#products-grid");
 class FoodItem {
   constructor(name, nutrients, thumbnail, loggedTime) {
     this.name = name;
@@ -360,7 +361,7 @@ async function displayRecipes(data, title) {
   }
   recipesCount.innerHTML += "recipes";
   if (length === 0) {
-    displayNotFound(divRecipes);
+    displayNotFound(divRecipes,'recipes');
     return;
   } else {
     divRecipes.innerHTML = "";
@@ -398,12 +399,11 @@ async function displayRecipes(data, title) {
   }
 }
 async function displayProducts(data, title = currentQuery, number) {
-  const productsGrid = document.querySelector("#products-grid");
   let productsCount = document.querySelector("#products-count");
   let length = data.length;
-  if (length === 0) {
+  if (length === 0 ) {
     retrievedProducts = null;
-    displayNotFound(productsGrid);
+    displayNotFound(productsGrid,'products');
     productsCount.innerHTML = `No products found in ${title} `;
     return;
   } else {
@@ -502,14 +502,24 @@ async function searchProductByNameorCode() {
     let data = await getProductByCode(barcodeInput.value);
     retrievedProducts = data.results;
     currentQuery = barcodeInput.value;
+    if(retrievedProducts){
     displayProducts(retrievedProducts, barcodeInput.value, barcodeInput.value);
     console.log(data);
+    }
+    else{
+      displayNotFound(productsGrid , 'products');
+    }
   });
   searchBtn.addEventListener("click", async () => {
     let data = await getByProductName(productInput.value);
     retrievedProducts = data.results;
     currentQuery = productInput.value;
-    displayProducts(retrievedProducts, productInput.value);
+    if(retrievedProducts){
+      displayProducts(retrievedProducts, productInput.value);
+    }
+    else{
+      displayNotFound(productsGrid , "products");
+    }
     console.log(data);
   });
 }
