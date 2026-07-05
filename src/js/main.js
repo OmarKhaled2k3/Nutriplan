@@ -17,7 +17,7 @@ import {
   getByProductName,
   getProductByCode,
   getProductsCategories,
-} from "./retrieve.js";
+} from "./api/mealdb.js";
 import {
   showSpinner,
   showSpinnerBefore,
@@ -37,7 +37,6 @@ import {
   enableLogRecipeBtn,
   disableLogRecipeBtn,
   displayWeeklyOverview,
-  getCalculatedWeeklySummary,
 } from "./ui/components.js";
 const DAILY_TARGETS = {
   protein: 50,
@@ -862,6 +861,36 @@ export function openProductDetailModal(product) {
     product.brand,
   );
   LogProductBtn(productLog);
+}
+export function getCalculatedWeeklySummary(foodLog) {
+  const today = new Date();
+  const currentDay = today.getDay();
+  const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+  
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - daysSinceMonday);
+  return Array.from({ length: 7 }, (_, i) => {
+    const nextDay = new Date(monday);
+    nextDay.setDate(monday.getDate() + i);
+    const dateKey = nextDay.toISOString().split('T')[0]; // "2026-07-05"
+    const todayStr = today.toISOString().split('T')[0];
+    const dayName = nextDay.toLocaleDateString('en-US', { weekday: 'short' });
+
+    const matchLogs = foodLog.filter(log => log.dateString === dateKey);
+    const dayTotals = matchLogs.reduce((acc, log) => {
+      acc.kcal += (log.nutrients?.calories || 0) ;
+      acc.items += 1;
+      return acc;
+    }, { kcal: 0, items: 0 });
+
+    return {
+      day: dayName,
+      date: nextDay.getDate(),
+      kcal: Math.round(dayTotals.kcal),
+      items: dayTotals.items,
+      isSelected: dateKey === todayStr
+    };
+  });
 }
 appLoadingScreen();
 disableSectionsExcept();
