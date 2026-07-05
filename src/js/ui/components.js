@@ -15,6 +15,11 @@
     <p class="text-gray-400 text-sm mt-2">Try searching for something else</p>
 </div>
 */
+export function appLoadingScreen(){
+  window.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('#app-loading-overlay').classList.add('loading'); // Or adds 'hidden'
+});
+}
 export function showSpinner(element) {
   element.innerHTML = `
     <div class="flex items-center justify-center py-12 w-full">
@@ -79,6 +84,16 @@ export function changeActive(divButtons, clickedButton) {
   clickedButton.classList.replace("bg-gray-100","bg-emerald-600");
   clickedButton.classList.replace("text-gray-700","text-white");
 }
+export function changeActiveTab(navTabs, clickedTab) {
+  const currentActive = navTabs.querySelector(".bg-emerald-50");
+
+  if (currentActive) {
+    currentActive.classList.replace("bg-emerald-50", "hover:bg-gray-50");
+    currentActive.classList.replace("text-emerald-700", "text-gray-600");
+  }
+  clickedTab.classList.replace("hover:bg-gray-50","bg-emerald-50");
+  clickedTab.classList.replace("text-gray-600","text-emerald-700");
+}
 export function disableNutritionFacts(nutritionFactsContainer) {
   const active = nutritionFactsContainer.classList.contains("hidden");
   if (!active) {
@@ -90,5 +105,25 @@ export function enableNutritionFacts(nutritionFactsContainer) {
   console.log({active});
   if (active ) {
     nutritionFactsContainer.classList.remove("hidden");
+  }
+}
+export function disableSectionsExcept(currentSection){
+  window.scrollTo({
+  top: 0,
+  left: 0,
+  behavior: 'smooth'
+});
+  const sections = document.querySelectorAll('section');
+  for(const section of sections){
+    section.classList.add('hidden')
+  }
+  if(currentSection){
+    currentSection.classList.remove('hidden');
+  }
+}
+export function enableHomeSection(){
+  const sections = document.querySelectorAll('section');
+  for(let i =0;i<3;i++){
+    sections[i].classList.remove('hidden')
   }
 }

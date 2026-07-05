@@ -25,7 +25,7 @@
 <body class="bg-gray-50 font-sans">
   <!-- Loading Overlay -->
   <div id="app-loading-overlay"
-    class="loading fixed inset-0 bg-white z-[100] flex items-center justify-center transition-opacity duration-500">
+    class="fixed inset-0 bg-white z-[100] flex items-center justify-center transition-opacity duration-500">
     <div class="text-center">
       <div class="relative w-20 h-20 mx-auto mb-6">
         <div class="absolute inset-0 rounded-xl bg-linear-to-br from-emerald-400 to-teal-600 animate-pulse"></div>
@@ -69,22 +69,22 @@
         </p>
         <ul class="space-y-1">
           <li>
-            <a class="nav-link flex items-center gap-3 px-3 py-2.5 bg-emerald-50 text-emerald-700 rounded-lg transition-all"
-              href="#">
+            <a id="recipes" class="nav-link flex items-center gap-3 px-3 py-2.5 bg-emerald-50 text-emerald-700 rounded-lg transition-all"
+              >
               <i class="fa-solid fa-utensils w-5"></i>
               <span class="font-semibold">Meals & Recipes</span>
             </a>
           </li>
           <li>
-            <a class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
-              href="#">
+            <a id="products" class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
+              >
               <i class="fa-solid fa-barcode w-5"></i>
               <span class="font-medium">Product Scanner</span>
             </a>
           </li>
           <li>
-            <a class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
-              href="#">
+            <a id="food-log" class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
+              >
               <i class="fa-solid fa-clipboard-list w-5"></i>
               <span class="font-medium">Food Log</span>
             </a>
@@ -197,7 +197,7 @@
       </div>
     </section>
 
-    <section id="meal-details" class="px-8 py-8 bg-gray-50">
+    <section id="meal-details" class="px-8 py-8 bg-gray-50 hidden">
       <div class="max-w-7xl mx-auto">
         <!-- Back Button -->
         <button id="back-to-meals-btn"
@@ -385,7 +385,7 @@
     </section>
 
     <!-- ============= PRODUCT SCANNER SECTION ============= -->
-    <section id="products-section" class="px-8 py-8 bg-gray-50 min-h-screen">
+    <section id="products-section" class="px-8 py-8 bg-gray-50 min-h-screen hidden">
       <div class="max-w-7xl mx-auto">
         <!-- Search Header -->
         <div class="bg-linear-to-r from-emerald-600 to-teal-600 rounded-2xl p-6 mb-6 text-white">
@@ -505,69 +505,14 @@
           </div>
 
           <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <div
-              class="product-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group"
-              data-barcode="7613034626844">
-              <div class="relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  src="https://images.openfoodfacts.org/images/products/316/893/015/9742/front_fr.54.400.jpg"
-                  alt="Product Name" loading="lazy" />
-
-                <!-- Nutri-Score Badge -->
-                <div
-                  class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded uppercase">
-                  Nutri-Score A
-                </div>
-
-                <!-- NOVA Badge -->
-                <div
-                  class="absolute top-2 right-2 bg-lime-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center"
-                  title="NOVA 2">
-                  2
-                </div>
-              </div>
-
-              <div class="p-4">
-                <p class="text-xs text-emerald-600 font-semibold mb-1 truncate">
-                  Brand Name
-                </p>
-                <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
-                  Product Name
-                </h3>
-
-                <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                  <span><i class="fa-solid fa-weight-scale mr-1"></i>250g</span>
-                  <span><i class="fa-solid fa-fire mr-1"></i>350 kcal/100g</span>
-                </div>
-
-                <!-- Mini Nutrition -->
-                <div class="grid grid-cols-4 gap-1 text-center">
-                  <div class="bg-emerald-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-emerald-700">8.5g</p>
-                    <p class="text-[10px] text-gray-500">Protein</p>
-                  </div>
-                  <div class="bg-blue-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-blue-700">45.2g</p>
-                    <p class="text-[10px] text-gray-500">Carbs</p>
-                  </div>
-                  <div class="bg-purple-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-purple-700">12.3g</p>
-                    <p class="text-[10px] text-gray-500">Fat</p>
-                  </div>
-                  <div class="bg-orange-50 rounded p-1.5">
-                    <p class="text-xs font-bold text-orange-700">18.5g</p>
-                    <p class="text-[10px] text-gray-500">Sugar</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============= FOOD LOG SECTION ============= -->
-    <section id="foodlog-section" class="px-8 py-8 bg-gray-50 min-h-screen">
+    <section id="foodlog-section" class="px-8 py-8 bg-gray-50 min-h-screen hidden">
       <div class="max-w-7xl mx-auto">
         <!-- Page Header -->
         <div class="bg-linear-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 mb-6 text-white">

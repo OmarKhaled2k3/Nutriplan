@@ -1,4 +1,5 @@
-import { API_KEY } from "./config.js";
+//import { API_KEY } from "./config.js";
+const API_KEY = import.meta.env.VITE_API_KEY;
 export async function getAreas(){
     let response = await fetch("https://nutriplan-api.vercel.app/api/meals/areas")
     const data = await response.json();
@@ -44,6 +45,26 @@ export async function getNutrition(jsonString){
         },
         body: jsonString
     });
+    const data = await response.json();
+    return data;
+}
+export async function getProductsCategories(){
+    let response = await fetch(`https://nutriplan-api.vercel.app/api/products/categories?page=1&limit=25`)
+    const data = await response.json();
+    return data;
+}
+export async function getByProductCategory(category){
+    let response = await fetch(`https://nutriplan-api.vercel.app/api/products/category/${category}?page=1&limit=24`)
+    const data = await response.json();
+    return data;
+}
+export async function getByProductName(name){
+    let response = await fetch(`https://nutriplan-api.vercel.app/api/products/search?q=${name}`)
+    const data = await response.json();
+    return data;
+}
+export async function getProductByCode(code){
+    let response = await fetch(`https://nutriplan-api.vercel.app/api/products/barcode/${code}`)
     const data = await response.json();
     return data;
 }
