@@ -513,7 +513,7 @@ async function searchProductByNameorCode() {
   barcodeBtn.addEventListener("click", async () => {
     console.log("searching...");
     let data = await getProductByCode(barcodeInput.value);
-    retrievedProducts = data.results;
+    retrievedProducts = [data.result];
     currentQuery = barcodeInput.value;
     if(retrievedProducts){
     displayProducts(retrievedProducts, barcodeInput.value, barcodeInput.value);
